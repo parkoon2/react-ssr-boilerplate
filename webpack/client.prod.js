@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
 module.exports = {
     devtool: 'source-map',
@@ -50,7 +51,29 @@ module.exports = {
                         sourceMap: true,
                         modules: true,
                     }
-                },]
+                },
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                        ident: 'postcss',
+                        plugins: [
+                            // Fix and adjust for known flexbox issues
+                            // See https://github.com/philipwalton/flexbugs
+                            require('postcss-flexbugs-fixes'),
+
+
+                            // Transpile stage-3 CSS standards based on browserslist targets.
+                            // See https://preset-env.cssdb.org/features for supported features.
+                            // Includes support for targetted auto-prefixing.
+                            require('postcss-preset-env')({
+                                autoprefixer: true,
+                                stage: 3,
+                                features: { 'custom-properties': false }
+                            }),
+                        ]
+                    }
+                },
+                ]
             },
             {
                 test: /\.scss$/,
@@ -64,6 +87,27 @@ module.exports = {
                         options: {
                             sourceMap: true,
                             modules: true,
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            ident: 'postcss',
+                            plugins: [
+                                // Fix and adjust for known flexbox issues
+                                // See https://github.com/philipwalton/flexbugs
+                                require('postcss-flexbugs-fixes'),
+
+
+                                // Transpile stage-3 CSS standards based on browserslist targets.
+                                // See https://preset-env.cssdb.org/features for supported features.
+                                // Includes support for targetted auto-prefixing.
+                                require('postcss-preset-env')({
+                                    autoprefixer: true,
+                                    stage: 3,
+                                    features: { 'custom-properties': false }
+                                }),
+                            ]
                         }
                     },
                     {
@@ -85,18 +129,21 @@ module.exports = {
     },
     optimization: {
         minimize: true,
-        minimizer: [new TerserPlugin({
-            extractComments: true,
-            cache: true,
-            parallel: true,
-            sourceMap: true, // Must be set to true if using source-maps in production
-            terserOptions: {
-                extractComments: 'all',
-                compress: {
-                    drop_console: true,
-                },
-            }
-        })],
+        minimizer: [
+            new TerserPlugin({
+                extractComments: true,
+                cache: true,
+                parallel: true,
+                sourceMap: true, // Must be set to true if using source-maps in production
+                terserOptions: {
+                    extractComments: 'all',
+                    compress: {
+                        drop_console: true,
+                    },
+                }
+            }),
+            new OptimizeCSSAssetsPlugin({})
+        ],
         splitChunks: {
             name: 'vendor',
             chunks: 'initial'

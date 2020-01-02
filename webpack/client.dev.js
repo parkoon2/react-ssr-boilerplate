@@ -45,7 +45,29 @@ module.exports = {
                         sourceMap: true,
                         modules: true,
                     }
-                },]
+                },
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                        ident: 'postcss',
+                        plugins: [
+                            // Fix and adjust for known flexbox issues
+                            // See https://github.com/philipwalton/flexbugs
+                            require('postcss-flexbugs-fixes'),
+
+
+                            // Transpile stage-3 CSS standards based on browserslist targets.
+                            // See https://preset-env.cssdb.org/features for supported features.
+                            // Includes support for targetted auto-prefixing.
+                            require('postcss-preset-env')({
+                                autoprefixer: true,
+                                stage: 3,
+                                features: { 'custom-properties': false }
+                            }),
+                        ]
+                    }
+                },
+                ]
             },
             {
                 test: /\.scss$/,
@@ -59,6 +81,27 @@ module.exports = {
                         options: {
                             sourceMap: true,
                             modules: true,
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            ident: 'postcss',
+                            plugins: [
+                                // Fix and adjust for known flexbox issues
+                                // See https://github.com/philipwalton/flexbugs
+                                require('postcss-flexbugs-fixes'),
+
+
+                                // Transpile stage-3 CSS standards based on browserslist targets.
+                                // See https://preset-env.cssdb.org/features for supported features.
+                                // Includes support for targetted auto-prefixing.
+                                require('postcss-preset-env')({
+                                    autoprefixer: true,
+                                    stage: 3,
+                                    features: { 'custom-properties': false }
+                                }),
+                            ]
                         }
                     },
                     {
