@@ -4,7 +4,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     devtool: 'source-map',
@@ -84,11 +84,19 @@ module.exports = {
         ]
     },
     optimization: {
-        minimizer: [
-            new UglifyJsPlugin({
-                sourceMap: true,
-            }),
-        ],
+        minimize: true,
+        minimizer: [new TerserPlugin({
+            extractComments: true,
+            cache: true,
+            parallel: true,
+            sourceMap: true, // Must be set to true if using source-maps in production
+            terserOptions: {
+                extractComments: 'all',
+                compress: {
+                    drop_console: true,
+                },
+            }
+        })],
         splitChunks: {
             name: 'vendor',
             chunks: 'initial'
