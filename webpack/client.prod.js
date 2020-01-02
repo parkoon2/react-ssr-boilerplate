@@ -8,7 +8,14 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
     devtool: 'source-map',
-    entry: [path.join(__dirname, '../client/src/index.js')],
+    entry: {
+        vendor: [
+            'react',
+            'react-dom',
+            'react-router-dom'
+        ],
+        app: [path.join(__dirname, '../client/src/index.js')]
+    },
     mode: 'production',
     output: {
         path: path.resolve(__dirname, "../server/public"),
@@ -82,6 +89,10 @@ module.exports = {
                 sourceMap: true,
             }),
         ],
+        splitChunks: {
+            name: 'vendor',
+            chunks: 'initial'
+        }
     },
     plugins: [
         new webpack.DefinePlugin({

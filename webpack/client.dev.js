@@ -1,14 +1,22 @@
 const path = require("path");
+const webpack = require('webpack')
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const config = require('../server/config/config').default
 
 module.exports = {
     name: "boilerpate",
     mode: "development",
     devtool: 'inline-source-map',
-    entry: [path.join(__dirname, '../client/src/index.js')],
+    entry: {
+        vendor: [
+            'react',
+            'react-dom',
+            'react-router-dom'
+        ],
+        app: [path.join(__dirname, '../client/src/index.js')]
+    },
+
     module: {
         rules: [
             {
@@ -72,7 +80,15 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, "../server/public"),
-        filename: "[name].bundle.js",
+        filename: "[name].[hash].js",
+        chunkFilename: "[name].[chunkhash].chunk.js",
+    },
+
+    optimization: {
+        splitChunks: {
+            name: 'vendor',
+            chunks: 'initial'
+        }
     },
     // development 환경에서만 실행되어야함!
     // production 에서 실행해도 되지만, 변경 사항이 적용되는데 시간이 오래걸림.
@@ -98,7 +114,7 @@ module.exports = {
         // 부분 리로딩
         hot: true,
         host: 'localhost',
-        port: config.devServer.port,
+        port: 5500,
         // Enable gzip compression of generated files.
         compress: true,
         // It is important to tell WebpackDevServer to use the same "root" path

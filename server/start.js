@@ -4,18 +4,19 @@ import { SERVER_PORT } from './helper/port'
 import useCluster from './helper/cluster'
 import server from './server'
 
-if (useCluster) {
-    if (cluster.isMaster) {
-        console.log(`Running cluster's master. Number of CPUs: ${useCluster}`);
-        forkWorkers(useCluster)
-    } else {
-        startWorker()
-    }
-} else {
-    console.log('Running without cluster.')
-    startWorker()
-}
+// if (useCluster) {
+//     if (cluster.isMaster) {
+//         console.log(`Running cluster's master. Number of CPUs: ${useCluster}`);
+//         forkWorkers(useCluster)
+//     } else {
+//         startWorker()
+//     }
+// } else {
+//     console.log('Running without cluster.')
+//     startWorker()
+// }
 
+startWorker()
 function startWorker() {
     server.listen(SERVER_PORT)
 }
